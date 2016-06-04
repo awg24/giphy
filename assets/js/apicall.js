@@ -10,10 +10,12 @@ $(document).ready(function(){
 		//getting giphy URL from API
 		var queryURL = "http://api.giphy.com/v1/gifs/search?q=" + oneFood + "&api_key=dc6zaTOxFJmzC&limit=10";
 
-		console.log(queryURL);
+		//Logging the query from giphy API - console.log(queryURL);
 
 		$.ajax({url: queryURL, method: 'GET'}).done(function(response){
 			var results = response.data;
+
+			$('#gifBox').empty();
 
 			for (var i = 0; i < results.length; i++){
 				var gifContainer = $('<div class="item">');
@@ -24,15 +26,29 @@ $(document).ready(function(){
 
 				var foodImage = $('<img>'); 
 				foodImage.attr('src', results[i].images.fixed_height.url);
+				foodImage.attr('data-state', "still");
+
+				// animates and pauses gif
+				$(foodImage).on('click', function(){
+					 var state = $(this).attr('data-state'); 
+					 console.log(state);
+
+					if (state == 'still'){
+						$(this).attr('src', $(this).data('animate'));
+						$(this).attr('data-state', 'animate');
+					}else{
+						$(this).attr('src', $(this).data('still'));
+						$(this).attr('data-state', 'still');
+					}
+
+				});
 
 				gifContainer.append(text);
 				gifContainer.append(foodImage);
 
 				$('#gifBox').prepend(gifContainer);
 
-
 			}
-
 
 		});
 	}
@@ -69,6 +85,7 @@ $(document).ready(function(){
 	// We have this line so that users can hit "enter" instead of clicking on ht button and it won't move to the next page
 	return false;
 	})
+
 
 
 $(document).on('click', '.noms', giphyCall);
